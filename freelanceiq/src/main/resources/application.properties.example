@@ -1,0 +1,16 @@
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+claude.api.key=your-api-key-here
+```
+
+Push the `.example` file instead. This way people know what properties are needed without seeing your real credentials.
+
+---
+
+**Versioned files** = files Git is tracking. Yes whatever shows up in that commit window are the files Git found as new/changed.
+
+---
+
+**Commit message:**
+```
+add models, repositories and project setup
