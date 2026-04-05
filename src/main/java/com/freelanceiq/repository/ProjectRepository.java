@@ -1,9 +1,8 @@
-package com.freelanceiq.repositories;
+package com.freelanceiq.repository;
 
 import com.freelanceiq.model.Project;
 import com.freelanceiq.model.ProjectStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 

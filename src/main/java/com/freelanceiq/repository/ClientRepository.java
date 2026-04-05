@@ -1,4 +1,4 @@
-package com.freelanceiq.repositories;
+package com.freelanceiq.repository;
 
 import com.freelanceiq.model.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
