@@ -6,14 +6,13 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 import java.util.Map;
 
-
 @Service
 public class AiService {
 
-    @Value("${claude.api.key}")
+    @Value("${groq.api.key}")
     private String apiKey;
 
-    @Value("${claude.api.url}")
+    @Value("${groq.api.url}")
     private String apiUrl;
 
     private final RestClient restClient = RestClient.create();
@@ -44,8 +43,7 @@ public class AiService {
         );
 
         Map<String, Object> requestBody = Map.of(
-                "model", "claude-sonnet-4-20250514",
-                "max_tokens", 1024,
+                "model", "llama-3.3-70b-versatile",
                 "messages", List.of(
                         Map.of("role", "user", "content", prompt)
                 )
@@ -53,14 +51,14 @@ public class AiService {
 
         Map response = restClient.post()
                 .uri(apiUrl)
-                .header("x-api-key", apiKey)
-                .header("anthropic-version", "2023-06-01")
+                .header("Authorization", "Bearer " + apiKey)
                 .header("Content-Type", "application/json")
                 .body(requestBody)
                 .retrieve()
                 .body(Map.class);
 
-        List<Map<String, Object>> content = (List<Map<String, Object>>) response.get("content");
-        return (String) content.get(0).get("text");
+        List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
+        Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+        return (String) message.get("content");
     }
 }
