@@ -2,6 +2,7 @@ package com.freelanceiq.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="timelogs")
@@ -15,6 +16,7 @@ public class TimeLog {
     private String workDescription;
     private LocalDate dateLogged;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
