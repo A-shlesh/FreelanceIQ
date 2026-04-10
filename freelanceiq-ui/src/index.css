@@ -93,10 +93,10 @@ h1 {
 }
 
 .form {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 30px;
-  flex-wrap: wrap;
 }
 
 .form input {
@@ -188,4 +188,88 @@ h1 {
 .card-risk {
   border-color: rgba(239, 68, 68, 0.6) !important;
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
+.form input[type="date"] {
+  background: #1a1a2e !important;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #e0e0ff !important;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+  color-scheme: dark;
+}
+
+.form input[type="date"]:focus {
+  border-color: #a78bfa;
+}
+
+.form select {
+  background: #1a1a2e !important;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  padding-right: 32px;
+  color: #e0e0ff !important;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a78bfa' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+}
+
+.form select:focus {
+  border-color: #a78bfa;
+}
+
+.form option {
+  background: #1a1a2e !important;
+  color: #e0e0ff;
+}
+
+.form option:disabled {
+  display: none;
+}
+
+.input-with-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-with-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.input-with-label label {
+  font-size: 12px;
+  color: rgba(196, 181, 253, 0.7);
+  letter-spacing: 0.5px;
+}
+
+.form input[type="date"]::before {
+  content: attr(placeholder);
+  color: rgba(196, 181, 253, 0.5);
+}
+
+.form input[type="date"]:valid::before {
+  display: none;
+}
+
+.form input[type="date"]::before {
+  content: attr(placeholder);
+  color: rgba(196, 181, 253, 0.5);
+}
+
+.form input[type="date"]:valid::before {
+  display: none;
 }
