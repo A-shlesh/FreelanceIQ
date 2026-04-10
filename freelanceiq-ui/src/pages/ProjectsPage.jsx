@@ -133,21 +133,21 @@ function ProjectsPage() {
             <span className={`badge badge-${project.status ? project.status.toLowerCase() : 'unknown'}`}>
               {project.status}
             </span>
-            <p>💰 Hourly Rate: ₹{project.hourlyRate}</p>
-            <p>📅 Deadline: {project.deadline}</p>
-            <p>🧩 Complexity: {project.complexity}</p>
-            <p>⏱️ Hours Logged: {project.totalHoursLogged}</p>
+            <p>Hourly Rate: ₹{project.hourlyRate}</p>
+            <p>Deadline: {project.deadline}</p>
+            <p>Complexity: {project.complexity}</p>
+            <p>Hours Logged: {project.totalHoursLogged}</p>
             <button
               className="btn-delete"
               onClick={() => handleDelete(project.id)}
             >
-              🗑️ Delete
+              Delete
             </button>
             <button
               className="btn-ai"
               onClick={() => handleSuggestPrice(project)}
             >
-              {aiLoading[project.id] ? '⏳ Thinking...' : '🤖 Suggest Price'}
+              {aiLoading[project.id] ? 'Thinking...' : 'AI Suggest Price'}
             </button>
             {aiResponses[project.id] && (
               <div className="ai-response">
@@ -157,7 +157,7 @@ function ProjectsPage() {
                     className="btn-ai-refresh"
                     onClick={() => handleSuggestPrice(project)}
                   >
-                    🔄 Refresh
+                    Refresh
                   </button>
                   <button
                     className="btn-ai-close"
