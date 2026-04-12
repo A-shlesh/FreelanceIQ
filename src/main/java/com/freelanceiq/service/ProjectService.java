@@ -44,6 +44,9 @@ public class ProjectService {
 
     @Transactional
     public Project createProject(Long clientId, Project project) {
+        if (project.getDeadline().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Deadline cannot be in the past");
+        }
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + clientId));
         project.setClient(client);

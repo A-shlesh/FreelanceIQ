@@ -106,11 +106,12 @@ function ProjectsPage() {
           value={formData.hourlyRate}
           onChange={handleChange}
         />
-        <input
-          name="deadline"
-          type="date"
-          value={formData.deadline}
-          onChange={handleChange}
+       <input 
+          name="deadline" 
+          type="date" 
+          min={new Date().toISOString().split('T')[0]}  // today's date
+          value={formData.deadline} 
+          onChange={handleChange} 
         />
         <select
           value={selectedClientId}
