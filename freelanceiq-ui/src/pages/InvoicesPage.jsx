@@ -41,7 +41,7 @@ function InvoicesPage() {
             <span className={`badge badge-${inv.status.toLowerCase()}`}>
               {inv.status}
             </span>
-            <p>Total: ${inv.totalAmount.toFixed(2)}</p>
+            <p>Total: ₹{inv.totalAmount.toFixed(2)}</p>
             <p>Issued: {inv.issuedAt ? inv.issuedAt.split('T')[0] : '—'}</p>
             <p>Paid: {inv.paidAt ? inv.paidAt.split('T')[0] : 'Not yet'}</p>
             {inv.status !== 'PAID' && (
