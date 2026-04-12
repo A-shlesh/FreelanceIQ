@@ -143,31 +143,22 @@ function ProjectsPage() {
             >
               Delete
             </button>
-            <button
-              className="btn-ai"
-              onClick={() => handleSuggestPrice(project)}
-            >
-              {aiLoading[project.id] ? 'Thinking...' : 'AI Suggest Price'}
-            </button>
-            {aiResponses[project.id] && (
-              <div className="ai-response">
-                <p>{aiResponses[project.id]}</p>
-                <div className="ai-response-actions">
-                  <button
-                    className="btn-ai-refresh"
-                    onClick={() => handleSuggestPrice(project)}
-                  >
-                    Refresh
-                  </button>
-                  <button
-                    className="btn-ai-close"
-                    onClick={() => setAiResponses({ ...aiResponses, [project.id]: null })}
-                  >
-                    ✕ Close
-                  </button>
+            {project.status !== 'COMPLETED' && (
+            <>
+              <button className="btn-ai" onClick={() => handleSuggestPrice(project)}>
+                {aiLoading[project.id] ? '⏳ Thinking...' : '🤖 Suggest Price'}
+              </button>
+              {aiResponses[project.id] && (
+                <div className="ai-response">
+                  <p>{aiResponses[project.id]}</p>
+                  <div className="ai-response-actions">
+                    <button className="btn-ai-refresh" onClick={() => handleSuggestPrice(project)}>🔄 Refresh</button>
+                    <button className="btn-ai-close" onClick={() => setAiResponses({ ...aiResponses, [project.id]: null })}>✕ Close</button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </>
+          )}
           </div>
         ))}
       </div>

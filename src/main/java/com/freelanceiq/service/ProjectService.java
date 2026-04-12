@@ -22,6 +22,9 @@ public class ProjectService {
     @Autowired
     private TimeLogRepository timeLogRepository;
 
+    @Autowired
+    private InvoiceService invoiceService;
+
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
@@ -84,7 +87,9 @@ public class ProjectService {
     public Project completeProject(Long id) {
         Project project = getProjectById(id);
         project.setStatus(ProjectStatus.COMPLETED);
-        return projectRepository.save(project);
+        projectRepository.save(project);
+        invoiceService.generateInvoice(id);  // add this line
+        return project;
     }
 
     public void deleteProject(Long id) {

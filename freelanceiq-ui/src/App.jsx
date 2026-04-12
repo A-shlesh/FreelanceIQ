@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import ClientsPage from './pages/ClientsPage'
 import ProjectsPage from './pages/ProjectsPage'
 import TimeLogsPage from './pages/TimeLogsPage'
+import InvoicesPage from './pages/InvoicesPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/timelogs" element={<TimeLogsPage />} />
+        <Route path="/invoices"  element={<InvoicesPage />} />
       </Routes>
     </BrowserRouter>
   )
