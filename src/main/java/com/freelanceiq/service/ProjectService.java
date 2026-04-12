@@ -81,6 +81,12 @@ public class ProjectService {
             long daysUntilDeadline = ChronoUnit.DAYS.between(LocalDate.now(), project.getDeadline());
             atRisk = daysUntilDeadline <= 3 && totalHours < 10;
         }
+
+        if (project.getDeadline() != null
+                && project.getDeadline().isBefore(LocalDate.now())
+                && project.getStatus() == ProjectStatus.ACTIVE) {
+            project.setStatus(ProjectStatus.OVERDUE);
+        }
         project.setAtRisk(atRisk);
 
         projectRepository.save(project);

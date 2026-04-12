@@ -32,6 +32,9 @@ public class Project {
     private Double totalHoursLogged;
     private Boolean atRisk;
 
+    @Transient
+    private String clientName;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
@@ -50,6 +53,10 @@ public class Project {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getClientName() {
+        return client != null ? client.getName() : null;
+    }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

@@ -131,6 +131,7 @@ function ProjectsPage() {
         {projects.map(project => (
           <div className={project.atRisk ? "card card-risk" : "card"} key={project.id}>
             <h3>{project.title}</h3>
+              <p>Client: {project.clientName}</p>
             <span className={`badge badge-${project.status ? project.status.toLowerCase() : 'unknown'}`}>
               {project.status}
             </span>
