@@ -8,6 +8,9 @@ function ProjectsPage() {
   const [selectedClientId, setSelectedClientId] = useState('')
   const [aiResponses, setAiResponses] = useState({})
   const [aiLoading, setAiLoading] = useState({})
+  const [editProject, setEditProject] = useState(null)
+  const [editForm, setEditForm]       = useState({})
+  const [reminder, setReminder]       = useState([])
 
   const [formData, setFormData] = useState({
     title: '',
@@ -19,9 +22,18 @@ function ProjectsPage() {
   })
 
   useEffect(() => {
-    api.get('/projects').then(res => setProjects(res.data))
-    api.get('/clients').then(res => setClients(res.data))
-  }, [])
+  api.get('/projects').then(res => {
+    setProjects(res.data)
+    const today = new Date()
+    const overdue = res.data.filter(p =>
+      p.deadline &&
+      new Date(p.deadline) < today &&
+      p.status !== 'COMPLETED'
+    )
+    setReminder(overdue)
+  })
+  api.get('/clients').then(res => setClients(res.data))
+}, [])
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -50,6 +62,31 @@ function ProjectsPage() {
         api.get('/projects').then(res => setProjects(res.data))
       })
   }
+  
+function handleEditClick(project) {
+  setEditProject(project)
+  setEditForm({
+    title: project.title,
+    description: project.description,
+    techStack: project.techStack,
+    complexity: project.complexity,
+    hourlyRate: project.hourlyRate,
+    deadline: project.deadline,
+  })
+}
+
+function handleEditChange(e) {
+  setEditForm({ ...editForm, [e.target.name]: e.target.value })
+}
+
+function handleEditSubmit(e) {
+  e.preventDefault()
+  api.put(`/projects/${editProject.id}`, editForm)
+    .then(() => {
+      api.get('/projects').then(res => setProjects(res.data))
+      setEditProject(null)  
+    })
+}
 
   function handleSuggestPrice(project) {
     setAiLoading({ ...aiLoading, [project.id]: true })
@@ -67,88 +104,61 @@ function ProjectsPage() {
   }
 
   return (
-    <div className="page">
-      <h1>Projects</h1>
+  <div className="page">
 
-      <form onSubmit={handleSubmit} className="form">
-        <input
-          name="title"
-          placeholder="Project Title"
-          value={formData.title}
-          onChange={handleChange}
-        />
-        <input
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleChange}
-        />
-        <input
-          name="techStack"
-          placeholder="Tech Stack"
-          value={formData.techStack}
-          onChange={handleChange}
-        />
-        <select
-          name="complexity"
-          value={formData.complexity}
-          onChange={handleChange}
-        >
-          <option value="" disabled>Complexity</option>
-          <option value="SIMPLE">SIMPLE</option>
-          <option value="MEDIUM">MEDIUM</option>
-          <option value="COMPLEX">COMPLEX</option>
-        </select>
-        <input
-          name="hourlyRate"
-          placeholder="Hourly Rate"
-          type="number"
-          value={formData.hourlyRate}
-          onChange={handleChange}
-        />
-       <input 
-          name="deadline" 
-          type="date" 
-          min={new Date().toISOString().split('T')[0]}  // today's date
-          value={formData.deadline} 
-          onChange={handleChange} 
-        />
-        <select
-          value={selectedClientId}
-          onChange={e => setSelectedClientId(e.target.value)}
-        >
-          <option value="" disabled>Select Client</option>
-          {clients.map(client => (
-            <option key={client.id} value={client.id}>
-              {client.name}
-            </option>
-          ))}
-        </select>
-        <button type="submit">Add Project</button>
-      </form>
+    {reminder.length > 0 && (
+      <div className="reminder-popup">
+        <h3>⚠️ Deadline Reminder</h3>
+        <p>These projects have passed their deadline:</p>
+        {reminder.map(p => (
+          <p key={p.id}>• {p.title} — {p.deadline}</p>
+        ))}
+        <button className="btn-ai-close" onClick={() => setReminder([])}>✕ Dismiss</button>
+      </div>
+    )}
 
-      <div className="card-grid">
-        {projects.map(project => (
-          <div className={project.atRisk ? "card card-risk" : "card"} key={project.id}>
-            <h3>{project.title}</h3>
-              <p>Client: {project.clientName}</p>
-            <span className={`badge badge-${project.status ? project.status.toLowerCase() : 'unknown'}`}>
-              {project.status}
-            </span>
-            <p>Hourly Rate: ₹{project.hourlyRate}</p>
-            <p>Deadline: {project.deadline}</p>
-            <p>Complexity: {project.complexity}</p>
-            <p>Hours Logged: {project.totalHoursLogged}</p>
-            <button
-              className="btn-delete"
-              onClick={() => handleDelete(project.id)}
-            >
-              Delete
-            </button>
-            {project.status !== 'COMPLETED' && (
+    <h1>Projects</h1>
+    <form onSubmit={handleSubmit} className="form">
+      <input name="title" placeholder="Project Title" value={formData.title} onChange={handleChange} />
+      <input name="description" placeholder="Description" value={formData.description} onChange={handleChange} />
+      <input name="techStack" placeholder="Tech Stack" value={formData.techStack} onChange={handleChange} />
+      <select name="complexity" value={formData.complexity} onChange={handleChange}>
+        <option value="" disabled>Complexity</option>
+        <option value="SIMPLE">SIMPLE</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="COMPLEX">COMPLEX</option>
+      </select>
+      <input name="hourlyRate" placeholder="Hourly Rate" type="number" value={formData.hourlyRate} onChange={handleChange} />
+      <input name="deadline" type="date"
+        min={new Date().toISOString().split('T')[0]}
+        value={formData.deadline} onChange={handleChange} />
+      <select value={selectedClientId} onChange={e => setSelectedClientId(e.target.value)}>
+        <option value="" disabled>Select Client</option>
+        {clients.map(client => (
+          <option key={client.id} value={client.id}>{client.name}</option>
+        ))}
+      </select>
+      <button type="submit">Add Project</button>
+    </form>
+
+    <div className="card-grid">
+      {projects.map(project => (
+        <div className={project.atRisk ? "card card-risk" : "card"} key={project.id}>
+          <h3>{project.title}</h3>
+          <p>Client: {project.clientName}</p>
+          <span className={`badge badge-${project.status ? project.status.toLowerCase() : 'unknown'}`}>
+            {project.status}
+          </span>
+          <p>Hourly Rate: ₹{project.hourlyRate}</p>
+          <p>Deadline: {project.deadline}</p>
+          <p>Complexity: {project.complexity}</p>
+          <p>Hours Logged: {project.totalHoursLogged}</p>
+          <button className="btn-delete" onClick={() => handleDelete(project.id)}>Delete</button>
+          <button className="btn-edit" onClick={() => handleEditClick(project)}>✏️ Edit</button>
+          {project.status !== 'COMPLETED' && (
             <>
               <button className="btn-ai" onClick={() => handleSuggestPrice(project)}>
-                {aiLoading[project.id] ? '⏳ Thinking...' : '🤖 Suggest Price'}
+                {aiLoading[project.id] ? '⏳ Thinking...' : 'Suggest Price'}
               </button>
               {aiResponses[project.id] && (
                 <div className="ai-response">
@@ -161,11 +171,39 @@ function ProjectsPage() {
               )}
             </>
           )}
-          </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-  )
-}
+
+    {editProject && (
+      <div className="modal-overlay" onClick={() => setEditProject(null)}>
+        <div className="modal" onClick={e => e.stopPropagation()}>
+          <h2>Edit Project</h2>
+          <form onSubmit={handleEditSubmit} className="form">
+            <input name="title" placeholder="Title"
+              value={editForm.title} onChange={handleEditChange} />
+            <input name="description" placeholder="Description"
+              value={editForm.description} onChange={handleEditChange} />
+            <input name="techStack" placeholder="Tech Stack"
+              value={editForm.techStack} onChange={handleEditChange} />
+            <select name="complexity" value={editForm.complexity} onChange={handleEditChange}>
+              <option value="SIMPLE">SIMPLE</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="COMPLEX">COMPLEX</option>
+            </select>
+            <input name="hourlyRate" type="number" placeholder="Hourly Rate"
+              value={editForm.hourlyRate} onChange={handleEditChange} />
+            <input name="deadline" type="date"
+              min={new Date().toISOString().split('T')[0]}
+              value={editForm.deadline} onChange={handleEditChange} />
+            <button type="submit">💾 Save</button>
+            <button type="button" onClick={() => setEditProject(null)}>Cancel</button>
+          </form>
+        </div>
+      </div>
+    )}
+
+  </div>
+)}
 
 export default ProjectsPage
