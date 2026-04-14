@@ -4,6 +4,7 @@ import ClientsPage from './pages/ClientsPage'
 import ProjectsPage from './pages/ProjectsPage'
 import TimeLogsPage from './pages/TimeLogsPage'
 import InvoicesPage from './pages/InvoicesPage'
+import DashboardPage from './pages/DashboardPage'
 import CometBackground from './components/CometBackground'
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
     <CometBackground />
       <Navbar />
       <Routes>
+        <Route path="/"          element={<DashboardPage />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/timelogs" element={<TimeLogsPage />} />
