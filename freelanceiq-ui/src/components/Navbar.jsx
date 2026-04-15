@@ -7,7 +7,10 @@ function Navbar() {
   return (
     <>
       <nav className="navbar-top">
-        <Link to="/" className="navbar-brand">FreelanceIQ</Link>
+        {!isHome && (
+          <Link to="/" className="navbar-back">&#8592;</Link>
+        )}
+        <Link to="/" className="navbar-brand">FREELANCEIQ</Link>
       </nav>
       {isHome && (
         <nav className="navbar-links-bar">
