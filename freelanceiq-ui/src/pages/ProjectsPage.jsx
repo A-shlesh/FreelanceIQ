@@ -21,16 +21,36 @@ function ProjectsPage() {
     deadline: ''
   })
 
+  function updateReminder(projectList) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const reminders = projectList
+    .filter(p => p.deadline && p.status !== 'COMPLETED' && p.status !== 'OVERDUE')
+    .map(p => {
+      const [year, month, day] = p.deadline.split('-').map(Number)
+      const deadline = new Date(year, month - 1, day)
+      deadline.setHours(0, 0, 0, 0)
+      const diffDays = Math.round((deadline - today) / (1000 * 60 * 60 * 24))
+      console.log(p.title, 'deadline:', p.deadline, 'diffDays:', diffDays)
+
+      let message = null
+      if (diffDays < 0) message = 'Deadline exceeded'
+      else if (diffDays === 0) message = 'Deadline is today'
+      else if (diffDays === 1) message = 'Deadline is tomorrow'
+
+      return message ? { ...p, reminderMessage: message } : null
+    })
+    .filter(Boolean)
+
+  console.log('setting reminders:', reminders)
+  setReminder(reminders)
+}
+
   useEffect(() => {
   api.get('/projects').then(res => {
     setProjects(res.data)
-    const today = new Date()
-    const overdue = res.data.filter(p =>
-      p.deadline &&
-      new Date(p.deadline) < today &&
-      p.status !== 'COMPLETED'
-    )
-    setReminder(overdue)
+    updateReminder(res.data)
   })
   api.get('/clients').then(res => setClients(res.data))
 }, [])
@@ -83,8 +103,11 @@ function handleEditSubmit(e) {
   e.preventDefault()
   api.put(`/projects/${editProject.id}`, editForm)
     .then(() => {
-      api.get('/projects').then(res => setProjects(res.data))
-      setEditProject(null)  
+      api.get('/projects').then(res => {
+        setProjects(res.data)
+        updateReminder(res.data)
+      })
+      setEditProject(null)
     })
 }
 
@@ -107,15 +130,14 @@ function handleEditSubmit(e) {
   <div className="page">
 
     {reminder.length > 0 && (
-      <div className="reminder-popup">
-        <h3>⚠️ Deadline Reminder</h3>
-        <p>These projects have passed their deadline:</p>
-        {reminder.map(p => (
-          <p key={p.id}>• {p.title} — {p.deadline}</p>
-        ))}
-        <button className="btn-ai-close" onClick={() => setReminder([])}>✕ Dismiss</button>
-      </div>
-    )}
+  <div className="reminder-popup">
+    <h3>Deadline Reminder</h3>
+    {reminder.map(p => (
+      <p key={p.id}>• {p.title} — {p.reminderMessage}</p>
+    ))}
+    <button className="btn-ai-close" onClick={() => setReminder([])}>✕ Dismiss</button>
+  </div>
+)}
 
     <h1>Projects</h1>
     <form onSubmit={handleSubmit} className="form">

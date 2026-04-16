@@ -65,6 +65,13 @@ public class ProjectService {
         existing.setComplexity(updatedProject.getComplexity());
         existing.setHourlyRate(updatedProject.getHourlyRate());
         existing.setDeadline(updatedProject.getDeadline());
+
+        if (updatedProject.getDeadline() != null
+                && !updatedProject.getDeadline().isBefore(LocalDate.now())
+                && existing.getStatus() == ProjectStatus.OVERDUE) {
+            existing.setStatus(ProjectStatus.ACTIVE);
+        }
+
         return projectRepository.save(existing);
     }
 
