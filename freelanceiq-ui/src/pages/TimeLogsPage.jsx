@@ -25,13 +25,17 @@ function TimeLogsPage() {
   }
 
   function handleSubmit(e) {
-    e.preventDefault()
-    api.post(`/timelogs?projectId=${selectedProjectId}`, formData)
-      .then(() => {
-        fetchTimeLogs()
-       setFormData({ hoursWorked: '', workDescription: '', dateLogged: '' })
-      })
+  e.preventDefault()
+  if (!formData.hoursWorked || !formData.workDescription || !formData.dateLogged) {
+    alert('All fields are required.')
+    return
   }
+  api.post(`/timelogs?projectId=${selectedProjectId}`, formData)
+    .then(() => {
+      fetchTimeLogs()
+      setFormData({ hoursWorked: '', workDescription: '', dateLogged: '' })
+    })
+}
 
   function handleDelete(id) {
     api.delete(`/timelogs/${id}`)
@@ -59,13 +63,15 @@ function TimeLogsPage() {
             Total Hours: <strong>{totalHours}</strong>
           </p>
           <form onSubmit={handleSubmit} className="form">
-            <input name="hoursWorked" type="number" placeholder="Hours Worked"
-              value={formData.hoursWorked} onChange={handleChange} />
-            <input name="workDescription" placeholder="Description"
-              value={formData.workDescription} onChange={handleChange} />
-            <input name="dateLogged" type="date"
-              value={formData.dateLogged} onChange={handleChange} />
-            <button type="submit">Add Log</button>
+          <input name="hoursWorked" type="number" placeholder="Hours Worked"
+            min="0.5" step="0.5"
+            value={formData.hoursWorked} onChange={handleChange} />
+          <input name="workDescription" placeholder="Description"
+            value={formData.workDescription} onChange={handleChange} />
+          <input name="dateLogged" type="date"
+            max={new Date().toISOString().split('T')[0]}
+            value={formData.dateLogged} onChange={handleChange} />
+          <button type="submit">Add Log</button>
           </form>
           <div className="card-grid">
             {timeLogs.map(log => (

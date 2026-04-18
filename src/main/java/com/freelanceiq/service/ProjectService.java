@@ -72,6 +72,14 @@ public class ProjectService {
             existing.setStatus(ProjectStatus.ACTIVE);
         }
 
+        if (existing.getStatus() == ProjectStatus.ACTIVE && updatedProject.getDeadline() != null) {
+            long daysUntilDeadline = ChronoUnit.DAYS.between(LocalDate.now(), updatedProject.getDeadline());
+            Double totalHours = timeLogRepository.sumHoursByProjectId(id);
+            if (totalHours == null) totalHours = 0.0;
+            boolean atRisk = daysUntilDeadline >= 0 && daysUntilDeadline <= 3 && totalHours < 10;
+            existing.setAtRisk(atRisk);
+        }
+
         return projectRepository.save(existing);
     }
 
