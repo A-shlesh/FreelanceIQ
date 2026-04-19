@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import api from '../api/axiosConfig'
 
 function ProjectsPage() {
 
+  const navigate = useNavigate()
   const [projects, setProjects] = useState([])
   const [clients, setClients] = useState([])
   const [selectedClientId, setSelectedClientId] = useState('')
@@ -165,7 +167,9 @@ function handleEditSubmit(e) {
 
     <div className="card-grid">
       {projects.map(project => (
-        <div className={project.atRisk ? "card card-risk" : "card"} key={project.id}>
+        <div className={project.atRisk ? "card card-risk" : "card"} key={project.id}
+            onClick={() => navigate(`/projects/${project.id}`)}
+            style={{ cursor: 'pointer' }}>
           <h3>{project.title}</h3>
           <p>Client: {project.clientName}</p>
           <span className={`badge badge-${project.status ? project.status.toLowerCase() : 'unknown'}`}>
@@ -180,7 +184,7 @@ function handleEditSubmit(e) {
           {project.status !== 'COMPLETED' && (
             <>
               <button className="btn-ai" onClick={() => handleSuggestPrice(project)}>
-                {aiLoading[project.id] ? '⏳ Thinking...' : 'Suggest Price'}
+                {aiLoading[project.id] ? 'Thinking...' : 'Suggest Price'}
               </button>
               {aiResponses[project.id] && (
                 <div className="ai-response">

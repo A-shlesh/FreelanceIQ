@@ -6,6 +6,7 @@ import TimeLogsPage from './pages/TimeLogsPage'
 import InvoicesPage from './pages/InvoicesPage'
 import DashboardPage from './pages/DashboardPage'
 import CometBackground from './components/CometBackground'
+import ProjectDetailPage from './pages/ProjectDetailPage.jsx'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/"          element={<DashboardPage />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/timelogs" element={<TimeLogsPage />} />
         <Route path="/invoices"  element={<InvoicesPage />} />
       </Routes>
