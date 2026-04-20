@@ -36,6 +36,7 @@ public class SchedulerService {
                     && project.getDeadline().isBefore(LocalDate.now())
                     && project.getStatus() == ProjectStatus.ACTIVE) {
                 project.setStatus(ProjectStatus.OVERDUE);
+                project.setAtRisk(false);
                 projectRepository.save(project);
             }
         }

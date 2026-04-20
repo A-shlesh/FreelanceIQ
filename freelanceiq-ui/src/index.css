@@ -122,6 +122,10 @@ h1 {
   margin-bottom: 30px;
 }
 
+.modal .form {
+  grid-template-columns: 1fr;
+}
+
 .form input {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(167, 139, 250, 0.3);
@@ -435,6 +439,7 @@ h1 {
   padding: 32px;
   width: 600px;
   max-width: 90vw;
+  overflow-y: auto;
 }
 
 .modal h2 {

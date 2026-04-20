@@ -47,6 +47,15 @@ function ProjectDetailPage() {
     })
   }
 
+  function handleComplete() {
+  if (window.confirm('Mark this project as completed? An invoice will be generated.')) {
+    api.patch(`/projects/${id}/complete`).then(() => {
+      fetchAll()
+      setShowEdit(false)
+    })
+  }
+}
+
   if (!project) return <div className="page">Loading...</div>
 
   const totalHours = timeLogs.reduce((sum, log) => sum + log.hoursWorked, 0)
@@ -69,36 +78,48 @@ function ProjectDetailPage() {
         <p>Deadline: {project.deadline}</p>
         <p>Hours Logged: {project.totalHoursLogged}</p>
         <p>At Risk: {project.atRisk ? 'Yes' : 'No'}</p>
+        {project.status !== 'COMPLETED' && (
+         <>
         <button className="btn-edit" onClick={() => setShowEdit(!showEdit)}
-          style={{ marginTop: '10px' }}>
-          {showEdit ? 'Cancel Edit' : 'Edit'}
+        style={{ marginTop: '10px' }}>
+        {showEdit ? 'Cancel Edit' : 'Edit'}
         </button>
+        <button className="btn-edit" onClick={handleComplete}
+        style={{ marginTop: '10px', marginLeft: '10px',color:'white' }}>
+        Mark Complete
+        </button>
+        </>
+         )}
       </div>
 
-      {showEdit && (
-        <div className="card" style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#a78bfa', marginBottom: '16px' }}>Edit Project</h3>
-          <form onSubmit={handleEditSubmit} className="form">
-            <input name="title" placeholder="Title"
-              value={editForm.title} onChange={handleEditChange} />
-            <input name="description" placeholder="Description"
-              value={editForm.description} onChange={handleEditChange} />
-            <input name="techStack" placeholder="Tech Stack"
-              value={editForm.techStack} onChange={handleEditChange} />
-            <select name="complexity" value={editForm.complexity} onChange={handleEditChange}>
-              <option value="SIMPLE">SIMPLE</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="COMPLEX">COMPLEX</option>
-            </select>
-            <input name="hourlyRate" type="number" placeholder="Hourly Rate"
-              value={editForm.hourlyRate} onChange={handleEditChange} />
-            <input name="deadline" type="date"
-              min={new Date().toISOString().split('T')[0]}
-              value={editForm.deadline} onChange={handleEditChange} />
-            <button type="submit">Save</button>
-          </form>
-        </div>
-      )}
+{showEdit && (
+  <div className="modal-overlay" onClick={() => setShowEdit(false)}>
+    <div className="modal" onClick={e => e.stopPropagation()}>
+      <h2>Edit Project</h2>
+      <form onSubmit={handleEditSubmit} className="form">
+        <input name="title" placeholder="Title"
+          value={editForm.title} onChange={handleEditChange} />
+        <input name="description" placeholder="Description"
+          value={editForm.description} onChange={handleEditChange} />
+        <input name="techStack" placeholder="Tech Stack"
+          value={editForm.techStack} onChange={handleEditChange} />
+        <select name="complexity" value={editForm.complexity} onChange={handleEditChange}>
+          <option value="SIMPLE">SIMPLE</option>
+          <option value="MEDIUM">MEDIUM</option>
+          <option value="COMPLEX">COMPLEX</option>
+        </select>
+        <input name="hourlyRate" type="number" placeholder="Hourly Rate"
+          value={editForm.hourlyRate} onChange={handleEditChange} />
+        <input name="deadline" type="date"
+          min={new Date().toISOString().split('T')[0]}
+          value={editForm.deadline} onChange={handleEditChange} />
+        <button type="submit">Save</button>
+        <button type="button" onClick={() => setShowEdit(false)}>Cancel</button>
+      </form>
+    </div>
+  </div>
+)}
+      
 
       <div className="card" style={{ marginBottom: '30px' }}>
         <h3 style={{ color: '#a78bfa', marginBottom: '12px' }}>Time Logs</h3>

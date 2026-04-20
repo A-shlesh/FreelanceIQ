@@ -84,6 +84,18 @@ function ProjectsPage() {
         api.get('/projects').then(res => setProjects(res.data))
       })
   }
+
+  function handleComplete(id) {
+  if (window.confirm('Mark this project as completed? An invoice will be generated.')) {
+    api.patch(`/projects/${id}/complete`)
+      .then(() => {
+        api.get('/projects').then(res => {
+          setProjects(res.data)
+          updateReminder(res.data)
+        })
+      })
+  }
+}
   
 function handleEditClick(project) {
   setEditProject(project)
@@ -128,6 +140,7 @@ function handleEditSubmit(e) {
     })
   }
 
+
   return (
   <div className="page">
 
@@ -137,7 +150,7 @@ function handleEditSubmit(e) {
     {reminder.map(p => (
       <p key={p.id}>• {p.title} — {p.reminderMessage}</p>
     ))}
-    <button className="btn-ai-close" onClick={() => setReminder([])}>✕ Dismiss</button>
+    <button className="btn-ai-close" onClick={() => setReminder([])}> Dismiss</button>
   </div>
 )}
 
@@ -179,8 +192,16 @@ function handleEditSubmit(e) {
           <p>Deadline: {project.deadline}</p>
           <p>Complexity: {project.complexity}</p>
           <p>Hours Logged: {project.totalHoursLogged}</p>
-          <button className="btn-delete" onClick={() => handleDelete(project.id)}>Delete</button>
-          <button className="btn-edit" onClick={() => handleEditClick(project)}>✏️ Edit</button>
+          <button className="btn-delete" onClick={(e) => { e.stopPropagation(); handleDelete(project.id) }}>Delete</button>
+          
+          {project.status !== 'COMPLETED' && (
+            <button className="btn-edit" onClick={(e) => { e.stopPropagation(); handleComplete(project.id) }}
+              style={{ color: 'white' }}>
+              Complete
+           </button>
+          )}
+          <button className="btn-edit" onClick={(e) => { e.stopPropagation(); handleEditClick(project) }}>Edit</button>
+            
           {project.status !== 'COMPLETED' && (
             <>
               <button className="btn-ai" onClick={() => handleSuggestPrice(project)}>
