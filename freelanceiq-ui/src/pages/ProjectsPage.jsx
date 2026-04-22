@@ -79,10 +79,12 @@ function ProjectsPage() {
   }
 
   function handleDelete(id) {
-    api.delete(`/projects/${id}`)
-      .then(() => {
-        api.get('/projects').then(res => setProjects(res.data))
-      })
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      api.delete(`/projects/${id}`)
+        .then(() => {
+          api.get('/projects').then(res => setProjects(res.data))
+        })
+    }
   }
 
   function handleComplete(id) {
@@ -204,15 +206,15 @@ function handleEditSubmit(e) {
             
           {project.status !== 'COMPLETED' && (
             <>
-              <button className="btn-ai" onClick={() => handleSuggestPrice(project)}>
+              <button className="btn-ai" onClick={(e) => { e.stopPropagation(); handleSuggestPrice(project) }}>
                 {aiLoading[project.id] ? 'Thinking...' : 'Suggest Price'}
               </button>
               {aiResponses[project.id] && (
                 <div className="ai-response">
                   <p>{aiResponses[project.id]}</p>
                   <div className="ai-response-actions">
-                    <button className="btn-ai-refresh" onClick={() => handleSuggestPrice(project)}>🔄 Refresh</button>
-                    <button className="btn-ai-close" onClick={() => setAiResponses({ ...aiResponses, [project.id]: null })}>✕ Close</button>
+                    <button className="btn-ai-refresh" onClick={(e) => { e.stopPropagation(); handleSuggestPrice(project) }}>🔄 Refresh</button>
+                    <button className="btn-ai-close" onClick={(e) => { e.stopPropagation(); setAiResponses({ ...aiResponses, [project.id]: null }) }}>✕ Close</button>
                   </div>
                 </div>
               )}

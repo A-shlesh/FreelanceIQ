@@ -30,9 +30,10 @@ public class AiService {
                 Current Hourly Rate: %s
                 
                 Please provide:
-                1. Recommended hourly rate (in USD)
-                2. Estimated total project cost
+                1. Recommended hourly rate (in INR - Indian Rupees)
+                2. Estimated total project cost (in INR)
                 3. Brief reasoning for your suggestion
+                Consider the Indian freelance market rates while suggesting.
                 Keep your response concise and practical.
                 """,
                 projectDetails.getOrDefault("title", "N/A"),

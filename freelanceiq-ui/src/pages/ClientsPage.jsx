@@ -29,10 +29,12 @@ function handleSubmit(e) {
 }
 
 function handleDelete(id) {
-  api.delete(`/clients/${id}`)
-    .then(() => {
-      api.get('/clients').then(res => setClients(res.data))
-    })
+  if (window.confirm('Are you sure you want to delete this client?')) {
+    api.delete(`/clients/${id}`)
+      .then(() => {
+        api.get('/clients').then(res => setClients(res.data))
+      })
+  }
 }
 
   return (
